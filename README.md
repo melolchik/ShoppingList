@@ -26,3 +26,9 @@ Presentation и Data-слой не должны знать друг о друг�
 Используем MutableLiveData setValue putValue
 
 #3.7 Presentation Part2 Автообновление списка
+
+#4 RecyclerView
+
+#4.1 Макеты 
+
+
