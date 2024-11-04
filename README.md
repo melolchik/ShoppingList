@@ -30,5 +30,9 @@ Presentation и Data-слой не должны знать друг о друг�
 #4 RecyclerView
 
 #4.1 Макеты 
-
+#4.2 Создание через LinerLayout
+#4.3 Adapter
+ViewHolder
+- inflat
+- findViewById
 

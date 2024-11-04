@@ -7,7 +7,12 @@ import com.example.shoppinglist.domain.ShopListRepository
 
 class ShopListRepositoryImpl : ShopListRepository {
 
-    private val shopList = mutableListOf<ShopItem>()
+    private val shopList = sortedSetOf<ShopItem>(object : Comparator<ShopItem>{
+        override fun compare(o1: ShopItem, o2: ShopItem): Int {
+            return o1.id.compareTo(o2.id)
+        }
+
+    })
     private val shopListLD = MutableLiveData<List<ShopItem>>()
      init {
          for (i in 0 until 10){
