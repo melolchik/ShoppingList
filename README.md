@@ -16,3 +16,11 @@ S - Single responsibility - Принцип единой ответственно
 
 # 3.5. Data- слой
 Реализация репозитория
+
+#3.6 Presentation
+
+Presentation знает всё о domain
+Data слой тоже всё знает о domain
+Presentation и Data-слой не должны знать друг о друге ничего
+Взаимодействие Activity и ViewModel должно происходить через LiveData
+Используем MutableLiveData setValue putValue

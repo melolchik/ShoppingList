@@ -6,6 +6,12 @@ import com.example.shoppinglist.domain.ShopListRepository
 class ShopListRepositoryImpl : ShopListRepository {
 
     private val shopList = mutableListOf<ShopItem>()
+     init {
+         for (i in 0 until 10){
+             val item = ShopItem("Name $i",i,true)
+             addShopItem(item)
+         }
+     }
 
     private var autoIncrementalId = 0
     override fun addShopItem(shopItem: ShopItem) {
