@@ -24,3 +24,5 @@ Data слой тоже всё знает о domain
 Presentation и Data-слой не должны знать друг о друге ничего
 Взаимодействие Activity и ViewModel должно происходить через LiveData
 Используем MutableLiveData setValue putValue
+
+#3.7 Presentation Part2 Автообновление списка
