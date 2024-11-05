@@ -37,4 +37,5 @@ ViewHolder
 - findViewById
 #4.4 Баги при использовании RecyclerView
 #4.5 ViewType и RecycledViewPool
+#4.6 Добавление слушателей
 

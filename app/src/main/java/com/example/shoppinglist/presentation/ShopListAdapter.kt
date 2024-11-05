@@ -24,6 +24,8 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
             notifyDataSetChanged()
         }
 
+    var onShopItemLongClickListener : ((ShopItem) -> Unit)? = null
+    var onShopItemClickListener : ((ShopItem) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
         Log.d("Adapter", "onCreateViewHolder count = ${++count}")
         val view =
@@ -43,9 +45,13 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
         holder.tvName.text = shopItem.name
         holder.tvCount.text = shopItem.count.toString()
 
-        holder.view.setOnClickListener({
+        holder.view.setOnLongClickListener() {
+            onShopItemLongClickListener?.invoke(shopItem)
             true
-        })
+        }
+        holder.view.setOnClickListener(){
+            onShopItemClickListener?.invoke(shopItem)
+        }
     }
 
     //when reused viewHolder
@@ -58,6 +64,10 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>
         return if (shopItem.enabled) VIEW_TYPE_ACTIVE else VIEW_TYPE_INACTIVE
     }
 
+    //functional interface - interface with one method --> lambda
+    interface OnShopItemLongClickListener{
+        fun onShopItemLongClick(shopItem: ShopItem)
+    }
     class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val tvName = view.findViewById<TextView>(R.id.tv_name)
         val tvCount = view.findViewById<TextView>(R.id.tv_count)
