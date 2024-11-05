@@ -38,4 +38,8 @@ ViewHolder
 #4.4 Баги при использовании RecyclerView
 #4.5 ViewType и RecycledViewPool
 #4.6 Добавление слушателей
+#4.7 Проблемы при использовании notifyDatasetChanged
+  полностью перезаполняется видимый список и для каждого элемента вызываетмя OnBindViewHolder
+#4.8 Реализация через DiffUtil и простой адаптер
+  
 
