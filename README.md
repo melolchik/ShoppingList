@@ -31,8 +31,10 @@ Presentation и Data-слой не должны знать друг о друг�
 
 #4.1 Макеты 
 #4.2 Создание через LinerLayout
-#4.3 Adapter
+#4.3 Adapter Зачем нужен ViewHolder
 ViewHolder
 - inflat
 - findViewById
+#4.4 Баги при использовании RecyclerView
+#4.5 ViewType и RecycledViewPool
 
