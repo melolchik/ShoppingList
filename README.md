@@ -48,6 +48,7 @@ ViewHolder
 #5 Работа над вторым экраном
 #5.1 Макеты для ShopItemActivity
 #5.2 Создание ShopItemViewModel
+#5.3 Завершение ShopItemViewModel
   
   
 
