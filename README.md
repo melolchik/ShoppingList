@@ -49,6 +49,7 @@ ViewHolder
 #5.1 Макеты для ShopItemActivity
 #5.2 Создание ShopItemViewModel
 #5.3 Завершение ShopItemViewModel
+#5.4 Фабричные методы newIntent
   
   
 
