@@ -1,22 +1,23 @@
 package com.example.shoppinglist.data
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.shoppinglist.domain.ShopItem
 import com.example.shoppinglist.domain.ShopListRepository
 import java.util.Random
 
-class ShopListRepositoryImpl : ShopListRepository {
+object ShopListRepositoryImpl : ShopListRepository {
 
-    private val shopList = sortedSetOf<ShopItem>(object : Comparator<ShopItem>{
-        override fun compare(o1: ShopItem, o2: ShopItem): Int {
-            return o1.id.compareTo(o2.id)
-        }
+    const val TAG = "ShopListRepositoryImpl"
 
-    })
-    private val shopListLD = MutableLiveData<List<ShopItem>>()
+
+    private val shopList = sortedSetOf<ShopItem>({ o1, o2 -> o1.id.compareTo(o2.id) })
+    private val _shopListLD = MutableLiveData<List<ShopItem>>()
+
+
      init {
-         for (i in 0 until 1000){
+         for (i in 0 until 10){
              val item = ShopItem("Name $i",i,Random().nextBoolean())
              addShopItem(item)
          }
@@ -24,6 +25,7 @@ class ShopListRepositoryImpl : ShopListRepository {
 
     private var autoIncrementalId = 0
     override fun addShopItem(shopItem: ShopItem) {
+        Log.d(TAG,"addShopItem $shopItem")
         if(shopItem.id == ShopItem.UNDEFINED_ID) {
             shopItem.id = autoIncrementalId++
         }
@@ -48,10 +50,10 @@ class ShopListRepositoryImpl : ShopListRepository {
     }
 
     override fun getShopList(): LiveData<List<ShopItem>> {
-        return shopListLD
+        return _shopListLD
     }
 
     private fun updateList(){
-        shopListLD.value = shopList.toList()
+        _shopListLD.value = shopList.toList()
     }
 }

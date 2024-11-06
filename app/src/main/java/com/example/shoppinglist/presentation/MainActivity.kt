@@ -1,6 +1,7 @@
 package com.example.shoppinglist.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         }
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
-            //Log.d(TAG, "Observe = $it")
+            Log.d(TAG, "Observe = $it")
             shopListAdapter.submitList(it)
         }
         val buttonAddItem = findViewById<FloatingActionButton>(R.id.button_add_shop_item)

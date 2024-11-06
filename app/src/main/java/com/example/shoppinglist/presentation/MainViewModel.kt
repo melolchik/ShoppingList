@@ -13,14 +13,15 @@ import com.example.shoppinglist.domain.ShopItem
 class MainViewModel : ViewModel(){
     //now it's clean architecture error
     //link to data layer - not right
-    private val repository = ShopListRepositoryImpl()
+    private val repository = ShopListRepositoryImpl
     private val getShopListUseCase = GetShopListUseCase(repository)
     private val deleteShopItemUseCase = DeleteShopItemUseCase(repository)
     private val getShopItemUseCase = GetShopItemUseCase(repository)
 
     private val editShopItemUseCase = EditShopItemUseCase(repository)
 
-    val shopList = getShopListUseCase.getShopList()
+    val shopList
+        get() = getShopListUseCase.getShopList()
 
     fun deleteShopItem(item : ShopItem){
         deleteShopItemUseCase.deleteShopItem(item)
