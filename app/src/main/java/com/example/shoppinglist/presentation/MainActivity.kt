@@ -18,14 +18,51 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinglist.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+const val COMMON_TAG = "COMMON"
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
     private var shopItemContainer: FragmentContainerView? = null
-    private val TAG = "ShoppingList"
+
+
+
+    fun log(text: String){
+        Log.d(COMMON_TAG,"$TAG: $text")
+    }
+    override fun onResume() {
+        log("onResume")
+        super.onResume()
+    }
+
+    override fun onRestart() {
+        log("onRestart")
+        super.onRestart()
+    }
+
+    override fun onPause() {
+        log("onPause")
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        log("onDestroy")
+        super.onDestroy()
+    }
+
+    override fun onStart() {
+        log("onStart")
+        super.onStart()
+    }
+
+    override fun onStop() {
+        log("onStop")
+        super.onStop()
+    }
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
+        log("onCreate")
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
@@ -38,7 +75,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         }
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
-            Log.d(TAG, "Observe = $it")
+            log("Observe = $it")
             shopListAdapter.submitList(it)
         }
         val buttonAddItem = findViewById<FloatingActionButton>(R.id.button_add_shop_item)
@@ -130,5 +167,9 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         shopListAdapter.onShopItemLongClickListener = {
             viewModel.changeEnableState(it)
         }
+    }
+
+    companion object{
+        const val TAG = "MainActivity"
     }
 }

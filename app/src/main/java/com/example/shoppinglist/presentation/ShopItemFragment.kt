@@ -27,7 +27,47 @@ class ShopItemFragment : Fragment() {
     private var screenMode = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
+    fun log(text: String){
+        Log.d(COMMON_TAG,"$TAG $screenMode: $text")
+    }
+
+
+    override fun onResume() {
+        log("onResume")
+        super.onResume()
+    }
+
+    override fun onPause() {
+        log("onPause")
+        super.onPause()
+    }
+
+    override fun onStart() {
+        log("onStart")
+        super.onStart()
+    }
+
+    override fun onStop() {
+        log("onStop")
+        super.onStop()
+    }
+    override fun onDestroyView() {
+        log("onDestroyView")
+        super.onDestroyView()
+    }
+
+    override fun onDetach() {
+        log("onDetach")
+        super.onDetach()
+    }
+
+    override fun onDestroy() {
+        log("onDestroy")
+        super.onDestroy()
+    }
+
     override fun onAttach(context: Context) {
+        log("onAttach")
         super.onAttach(context)
         if(context is OnEditingFinishedListener){
             onEditingFinishedListener = context
@@ -37,7 +77,7 @@ class ShopItemFragment : Fragment() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG,"onCreate")
+        log("onCreate")
         parseArguments()
     }
     override fun onCreateView(
@@ -45,11 +85,13 @@ class ShopItemFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        log("onCreateView")
         return inflater.inflate(R.layout.fragment_shop_item, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        log("onViewCreated")
         initViews(view)
         viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
         initErrors()
@@ -162,7 +204,7 @@ class ShopItemFragment : Fragment() {
     }
 
     companion object {
-        private const val TAG = "ShopItemFragment"
+        public const val TAG = "ShopItemFragment"
         private const val SCREEN_MODE = "extra_mode"
         private const val SHOP_ITEM_ID = "extra_shop_item_id"
         private const val MODE_ADD = "mode_add"

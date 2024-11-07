@@ -3,6 +3,7 @@ package com.example.shoppinglist.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,10 +16,15 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
 
     private var screenMode = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    fun log(text: String){
+        Log.d(COMMON_TAG,"$TAG: $text")
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_shop_item)
+        log("onCreate")
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.shop_item_container)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -31,6 +37,36 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
             launchRightMode()
         }
 
+    }
+
+    override fun onResume() {
+        log("onResume")
+        super.onResume()
+    }
+
+    override fun onRestart() {
+        log("onRestart")
+        super.onRestart()
+    }
+
+    override fun onPause() {
+        log("onPause")
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        log("onDestroy")
+        super.onDestroy()
+    }
+
+    override fun onStart() {
+        log("onStart")
+        super.onStart()
+    }
+
+    override fun onStop() {
+        log("onStop")
+        super.onStop()
     }
 
     private fun launchRightMode() {
@@ -66,6 +102,7 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
     }
 
     companion object {
+        private const val TAG = "ShopItemActivity"
         private const val EXTRA_SCREEN_MODE = "extra_mode"
         private const val EXTRA_SHOP_ITEM_ID = "extra_shop_item_id"
         private const val MODE_ADD = "mode_add"
