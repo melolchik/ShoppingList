@@ -26,16 +26,10 @@ class ShopItemActivity : AppCompatActivity() {
             insets
         }
         parseIntent()
-        launchRightMode()
-//        initViews()
-//
-//        initErrors()
-//
-//        viewModel.shouldCloseScreen.observe(this){
-//            finish()
-//        }
-//
-
+        //activity not recreated
+        if(savedInstanceState == null) {
+            launchRightMode()
+        }
 
     }
 
@@ -47,7 +41,7 @@ class ShopItemActivity : AppCompatActivity() {
 
         }
         supportFragmentManager.beginTransaction()
-            .add(R.id.shop_item_container, fragment)
+            .replace(R.id.shop_item_container, fragment)
             .commit()
 
     }

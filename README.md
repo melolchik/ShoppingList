@@ -59,5 +59,6 @@ ViewHolder
 #6.3 Параметры во фрагменте и LifecycleOwner
 #6.4 Методы require и get, работа с FragmentManager
 #6.5 Правильная передача параметров во фрагмент
+#6.6 Работа с бэкстэком, методы add и replace
   
 

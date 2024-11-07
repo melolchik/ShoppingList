@@ -3,6 +3,7 @@ package com.example.shoppinglist.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ class ShopItemFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG,"onCreate")
         parseArguments()
     }
     override fun onCreateView(
@@ -44,7 +46,6 @@ class ShopItemFragment : Fragment() {
 
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
             activity?.onBackPressed()
-            requireActivity().onBackPressed()
         }
 
         when (screenMode) {
@@ -147,6 +148,7 @@ class ShopItemFragment : Fragment() {
     }
 
     companion object {
+        private const val TAG = "ShopItemFragment"
         private const val SCREEN_MODE = "extra_mode"
         private const val SHOP_ITEM_ID = "extra_shop_item_id"
         private const val MODE_ADD = "mode_add"
