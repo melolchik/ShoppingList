@@ -131,4 +131,5 @@ onViewCreated --> с этого момента можно работать с Vi
 
 #6.9 Собеседование по теме Fragments
 #7.18 Data Binding внутри адаптера RecyclerView
+#7.19 Интеграция Data Binding в Shopping List
 
