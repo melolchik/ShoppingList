@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.kotlinParcelize)
+    alias(libs.plugins.navigation.safeargs)
+    alias(libs.plugins.jetbrains.kotlin.kapt)
 }
 
 android {
@@ -29,6 +32,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    buildFeatures{
+        dataBinding = true
     }
 }
 

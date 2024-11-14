@@ -129,4 +129,6 @@ onViewCreated --> с этого момента можно работать с Vi
 2024-11-07 11:28:59.253 13096-13096 COMMON                  com.example.shoppinglist             D  MainActivity: Observe = [ShopItem(name=Name 0, count=0, enabled=false, id=0), ShopItem(name=Name 1, count=1, enabled=false, id=1), ShopItem(name=Name 2, count=2, enabled=true, id=2), ShopItem(name=Name 3, count=3, enabled=false, id=3), ShopItem(name=Name 4, count=4, enabled=false, id=4), ShopItem(name=Name 5, count=5, enabled=false, id=5), ShopItem(name=Name 6, count=6, enabled=false, id=6), ShopItem(name=Name 7, count=7, enabled=false, id=7), ShopItem(name=Name 8, count=8, enabled=true, id=8), ShopItem(name=Name 9, count=9, enabled=false, id=9)]
 2024-11-07 11:28:59.253 13096-13096 COMMON                  com.example.shoppinglist             D  MainActivity: onResume
 
+#6.9 Собеседование по теме Fragments
+#7.18 Data Binding внутри адаптера RecyclerView
 
