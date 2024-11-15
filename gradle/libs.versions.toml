@@ -10,6 +10,8 @@ material = "1.12.0"
 activity = "1.8.0"
 constraintlayout = "2.1.4"
 navigation = "2.8.0"
+kotlinxCoroutines = "1.4.2"
+room = "2.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -23,6 +25,11 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 #Navigation
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigation" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigation" }
+coroutines-core = {group ='org.jetbrains.kotlinx', name = 'kotlinx-coroutines-core', version.ref = "kotlinxCoroutines"}
+coroutines-android = {group ='org.jetbrains.kotlinx', name = 'kotlinx-coroutines-android', version.ref = "kotlinxCoroutines"}
+room-runtime = {group ='androidx.room', name = 'room-runtime', version.ref = "room"}
+room-ktx = {group ='androidx.room', name = 'room-ktx', version.ref = "room"}
+room-compiler = {group ='androidx.room', name = 'room-compiler', version.ref = "room"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
