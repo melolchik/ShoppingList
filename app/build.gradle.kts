@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
+    implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)

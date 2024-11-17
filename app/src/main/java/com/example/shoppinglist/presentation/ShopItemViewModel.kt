@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.shoppinglist.data.ShopListRepositoryImpl
 import com.example.shoppinglist.domain.AddShopItemUseCase
 import com.example.shoppinglist.domain.EditShopItemUseCase
@@ -38,10 +39,9 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
     val shouldCloseScreen: LiveData<Unit>
         get() = _shouldCloseScreen
 
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     fun getShopItem(id: Int) {
-        scope.launch {
+        viewModelScope.launch {
             val item = getShopItemUseCase.getShopItem(id)
             _shopItem.value = item
         }
@@ -53,7 +53,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
         val fieldsValid = validateInput(name, count)
 
         if (fieldsValid) {
-            scope.launch {
+            viewModelScope.launch {
                 addShopItemUseCase.addShopItem(ShopItem(name, count, true))
                 finishWork()
             }
@@ -71,7 +71,7 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
         val count = parseCount(inputCount)
         val fieldsValid = validateInput(name, count)
         _shopItem.value?.let {
-            scope.launch {
+            viewModelScope.launch {
                 val shopItem = it.copy(name = name, count = count)
                 if (fieldsValid) {
                     editShopItemRepository.editShopItem(shopItem)
@@ -116,8 +116,4 @@ class ShopItemViewModel(application: Application) : AndroidViewModel(application
         _errorInputCount.value = false
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        scope.cancel()
-    }
 }

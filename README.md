@@ -140,4 +140,5 @@ onViewCreated --> с этого момента можно работать с Vi
 Dispatchers.Mian
 Dispatchers.IO - фоновый поток,макс кол-во 64
 Dispatchers.Default - для долгих выч, макс. кол-во потоков = кол-ву ядер процессора, но не меньше 2х
+#8.11 ViewModelScope
 
