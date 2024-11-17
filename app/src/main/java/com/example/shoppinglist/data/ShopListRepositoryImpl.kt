@@ -1,5 +1,6 @@
 package com.example.shoppinglist.data
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,53 +8,34 @@ import com.example.shoppinglist.domain.ShopItem
 import com.example.shoppinglist.domain.ShopListRepository
 import java.util.Random
 
-object ShopListRepositoryImpl : ShopListRepository {
+class ShopListRepositoryImpl(application: Application) : ShopListRepository {
 
-    const val TAG = "ShopListRepositoryImpl"
+    companion object {
+        const val TAG = "ShopListRepositoryImpl"
+    }
 
+    private val shopListDao = AppDatabase.getInstance(application).shopListDao()
+    private val mapper = ShopListMapper()
 
-    private val shopList = sortedSetOf<ShopItem>({ o1, o2 -> o1.id.compareTo(o2.id) })
-    private val _shopListLD = MutableLiveData<List<ShopItem>>()
-
-
-     init {
-         for (i in 0 until 10){
-             val item = ShopItem("Name $i",i,Random().nextBoolean())
-             addShopItem(item)
-         }
-     }
-
-    private var autoIncrementalId = 0
     override fun addShopItem(shopItem: ShopItem) {
-        Log.d(TAG,"addShopItem $shopItem")
-        if(shopItem.id == ShopItem.UNDEFINED_ID) {
-            shopItem.id = autoIncrementalId++
-        }
-        shopList.add(shopItem)
-        updateList()
+        shopListDao.addShopItem(mapper.mapEntityToDbModel(shopItem))
     }
 
     override fun deleteShopItem(shopItem: ShopItem) {
-        shopList.remove(shopItem)
-        updateList()
+        shopListDao.deleteShopItem(shopItem.id)
     }
 
     override fun editShopItem(shopItem: ShopItem) {
-       val oldItem = getShopItem(shopItem.id)
-        shopList.remove(oldItem)
-        addShopItem(shopItem)
+        shopListDao.addShopItem(mapper.mapEntityToDbModel(shopItem))
     }
 
     override fun getShopItem(id: Int): ShopItem {
-        return shopList.find { it.id == id }
-            ?: throw RuntimeException("Element with id $id not found")
+        val dbModel = shopListDao.getShopItem(id)
+        return mapper.mapDbModelToEntity(dbModel)
     }
 
     override fun getShopList(): LiveData<List<ShopItem>> {
-        return _shopListLD
+        return shopListDao.getShopList()
     }
 
-    private fun updateList(){
-        _shopListLD.value = shopList.toList()
-    }
 }

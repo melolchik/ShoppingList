@@ -133,4 +133,5 @@ onViewCreated --> с этого момента можно работать с Vi
 #7.18 Data Binding внутри адаптера RecyclerView
 #7.19 Интеграция Data Binding в Shopping List
 #8.6 Создание базы данных для приложения Shopping List
+#8.7 Mappers
 
