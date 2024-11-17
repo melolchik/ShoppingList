@@ -136,4 +136,8 @@ onViewCreated --> с этого момента можно работать с Vi
 #8.7 Mappers
 #8.8 MediatorLiveData и Transformations.map
 #8.9 App Inspection и auto generate
+#8.10 Coroutine Scope и Dispatchers
+Dispatchers.Mian
+Dispatchers.IO - фоновый поток,макс кол-во 64
+Dispatchers.Default - для долгих выч, макс. кол-во потоков = кол-ву ядер процессора, но не меньше 2х
 
