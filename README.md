@@ -134,4 +134,5 @@ onViewCreated --> с этого момента можно работать с Vi
 #7.19 Интеграция Data Binding в Shopping List
 #8.6 Создание базы данных для приложения Shopping List
 #8.7 Mappers
+#8.8 MediatorLiveData и Transformations.map
 

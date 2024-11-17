@@ -10,7 +10,7 @@ import com.example.shoppinglist.domain.GetShopItemUseCase
 import com.example.shoppinglist.domain.GetShopListUseCase
 import com.example.shoppinglist.domain.ShopItem
 
-class MainViewModel : ViewModel(){
+class MainViewModel : AndroidViewModel(){
     //now it's clean architecture error
     //link to data layer - not right
     private val repository = ShopListRepositoryImpl

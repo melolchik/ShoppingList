@@ -3,7 +3,9 @@ package com.example.shoppinglist.data
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.switchMap
 import com.example.shoppinglist.domain.ShopItem
 import com.example.shoppinglist.domain.ShopListRepository
 import java.util.Random
@@ -35,7 +37,14 @@ class ShopListRepositoryImpl(application: Application) : ShopListRepository {
     }
 
     override fun getShopList(): LiveData<List<ShopItem>> {
-        return shopListDao.getShopList()
+//        return MediatorLiveData<List<ShopItem>>().apply {
+//            addSource(shopListDao.getShopList()) {
+//                value = mapper.mapListDbModelToListEntity(it)
+//            }
+//        }
+        return shopListDao.getShopList().switchMap {
+            MutableLiveData<List<ShopItem>>(mapper.mapListDbModelToListEntity(it))
+        }
     }
 
 }
