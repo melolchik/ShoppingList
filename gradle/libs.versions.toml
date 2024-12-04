@@ -13,6 +13,7 @@ navigation = "2.8.0"
 kotlinxCoroutines = "1.4.2"
 room = "2.6.1"
 lifecycle = "2.8.7"
+dagger = "2.51.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +33,8 @@ room-runtime = {group ='androidx.room', name = 'room-runtime', version.ref = "ro
 room-ktx = {group ='androidx.room', name = 'room-ktx', version.ref = "room"}
 room-compiler = {group ='androidx.room', name = 'room-compiler', version.ref = "room"}
 lifecycle-viewmodel-ktx = {group ='androidx.lifecycle', name = 'lifecycle-viewmodel-ktx',  version.ref = "lifecycle"}
+dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
+dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -14,8 +14,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.shoppinglist.R
 import com.example.shoppinglist.databinding.FragmentShopItemBinding
+import com.example.shoppinglist.di.ViewModelFactory
 import com.example.shoppinglist.domain.ShopItem
 import com.google.android.material.textfield.TextInputLayout
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
     private var _binding : FragmentShopItemBinding? = null
@@ -26,6 +28,13 @@ class ShopItemFragment : Fragment() {
     private lateinit var onEditingFinishedListener : OnEditingFinishedListener
     private var screenMode = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
+
+    private val component by lazy {
+        (this.requireActivity().application as ShoppingListApp).component
+    }
+
+    @Inject
+    lateinit var viewModelFactory : ViewModelFactory
 
     fun log(text: String){
         Log.d(COMMON_TAG,"$TAG $screenMode: $text")
@@ -68,6 +77,7 @@ class ShopItemFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         log("onAttach")
+        component.inject(this)
         super.onAttach(context)
         if(context is OnEditingFinishedListener){
             onEditingFinishedListener = context
@@ -93,8 +103,8 @@ class ShopItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         log("onViewCreated")
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
         binding.viewModel = viewModel
         initErrors()
 

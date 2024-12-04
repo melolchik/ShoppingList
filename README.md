@@ -1,5 +1,5 @@
 # ShoppingList
-
+cd c:/Projects/ShoppingList
 Clean Architecture - убирает связанность кода
 3 слоя!
 # Data - Работа с данными, загрузка, сохранение
@@ -141,4 +141,6 @@ Dispatchers.Mian
 Dispatchers.IO - фоновый поток,макс кол-во 64
 Dispatchers.Default - для долгих выч, макс. кол-во потоков = кол-ву ядер процессора, но не меньше 2х
 #8.11 ViewModelScope
+
+#11.20 Dependency Injection. Shopping List
 

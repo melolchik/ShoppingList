@@ -9,15 +9,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainer
-import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinglist.R
 import com.example.shoppinglist.databinding.ActivityMainBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.shoppinglist.di.ViewModelFactory
+import javax.inject.Inject
 
 const val COMMON_TAG = "COMMON"
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
@@ -25,7 +24,13 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     private lateinit var binding : ActivityMainBinding
     private lateinit var viewModel: MainViewModel
     private lateinit var shopListAdapter: ShopListAdapter
-    //private lateinit var _binding : ActivityMainB
+
+    private val component by lazy {
+        (this.application as ShoppingListApp).component
+    }
+
+    @Inject
+    lateinit var viewModelFactory : ViewModelFactory
 
 
 
@@ -65,6 +70,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         log("onCreate")
+        component.inject(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(this.layoutInflater)
@@ -75,7 +81,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
             log("Observe = $it")
             shopListAdapter.submitList(it)
