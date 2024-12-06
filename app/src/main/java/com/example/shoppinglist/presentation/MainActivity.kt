@@ -104,6 +104,22 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             null,
             null
         )
+
+        contentResolver.query(
+            Uri.parse("content://com.example.shoppinglist/shop_items/3"),
+            null,
+            null,
+            null,
+            null
+        )
+
+        contentResolver.query(
+            Uri.parse("content://com.example.shoppinglist/shop_items/Jonh"),
+            null,
+            null,
+            null,
+            null
+        )
     }
 
     override fun onEditingFinished() {

@@ -172,3 +172,52 @@ contentResolver.query(
             null,
             null
         )
+		
+#13.2 UriMatcher
+ 13.2 UriMatcher - позволяет обрабатывать запросы, которые приходят в данный провайдер
+ 
+class ShopListProvider : ContentProvider() {
+
+    private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
+	//добавляем запросы , которые будем обрабатывать
+        addURI(authorities, "shop_items", GET_SHOP_ITEM_QUERY)
+    }
+......
+
+    override fun query(
+        uri: Uri,
+        projection: Array<out String>?,
+        selection: String?,
+        selectionArgs: Array<out String>?,
+        sortOrder: String?
+    ): Cursor? {
+
+        val code = uriMatcher.match(uri)
+        when(code){
+            GET_SHOP_ITEM_QUERY -> {
+
+            }
+        }
+        log("query $uri code = $code" )
+        return null
+    }
+
+    companion object{
+        const val authorities = "com.example.shoppinglist"
+        private const val GET_SHOP_ITEM_QUERY = 100
+    }
+	
+	Если нужен не весь список shop_items, а один, запрос будет выглядеть так
+	
+	
+	Uri.parse("content://com.example.shoppinglist/shop_items/3") - в этом случае в матчер добавляем addURI(authorities, "shop_items/#", GET_SHOP_ITEM_BY_ID)
+	или так
+	Uri.parse("content://com.example.shoppinglist/shop_items/Jonh") в этом addURI(authorities, "shop_items/*", GET_SHOP_ITEM_BY_NAME)
+	
+	
+	 private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
+        addURI(authorities, "shop_items", GET_SHOP_ITEM_QUERY)
+        addURI(authorities, "shop_items/#", GET_SHOP_ITEM_BY_ID)
+        addURI(authorities, "shop_items/*", GET_SHOP_ITEM_BY_NAME)
+    }
+}
