@@ -144,3 +144,31 @@ Dispatchers.Default - для долгих выч, макс. кол-во пото
 
 #11.20 Dependency Injection. Shopping List
 
+#13.1 Создание провайдера
+
+class ShopListProvider : ContentProvider() {
+
+    fun log(text : String){
+        Log.d("ShopListProvider", text)
+    }
+    override fun onCreate(): Boolean {
+	 //true - при успешном создании провайдера
+        return true
+    }
+	
+	ContentProvider как компонент должен быть зарег. в манифесте
+	
+	<provider
+            android:authorities="com.example.shoppinglist" - что-то вроде базового URL , обычно совпадает с названием пакета, но не обязательно, должен быть уникальным
+            android:name=".data.ShopListProvider"
+            android:exported="true" />
+
+Чтобы отправлять запросы в ContentProvider необходимо получить ContentResolver
+
+contentResolver.query(
+            Uri.parse("content://com.example.shoppinglist/shop_items"),
+            null,
+            null,
+            null,
+            null
+        )
