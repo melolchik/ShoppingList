@@ -384,3 +384,13 @@ override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out Strin
                         arrayOf(item.id.toString())
                     )
             }
+			
+#13.6 Получение данных в другом приложении
+
+Для использования этого провайдера в другом приложении нужно прописать в манифесте (начиная с 11 версии андроида)
+
+<queries>
+    <provider android:authorities="com.example.shoppinglist"/>
+</queries>
+
+В остальном всё тоже самое
