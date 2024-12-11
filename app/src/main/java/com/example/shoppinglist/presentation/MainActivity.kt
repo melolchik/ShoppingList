@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinglist.R
+import com.example.shoppinglist.data.ShopListProvider
 import com.example.shoppinglist.databinding.ActivityMainBinding
 import com.example.shoppinglist.di.ViewModelFactory
 import com.example.shoppinglist.domain.ShopItem
@@ -116,10 +117,10 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
                     log("columnNames = ${names}")
                 }
 
-                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
-                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow(ShopListProvider.KEY_ID))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow(ShopListProvider.KEY_NAME))
+                val count = cursor.getInt(cursor.getColumnIndexOrThrow(ShopListProvider.KEY_COUNT))
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow(ShopListProvider.KEY_ENABLED)) > 0
 
                 val shopItem = ShopItem(
                     id = id,

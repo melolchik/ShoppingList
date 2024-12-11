@@ -7,6 +7,7 @@ import android.database.Cursor
 import android.icu.lang.UScript.COMMON
 import android.net.Uri
 import android.util.Log
+import com.example.shoppinglist.domain.ShopItem
 import com.example.shoppinglist.presentation.COMMON_TAG
 import com.example.shoppinglist.presentation.ShoppingListApp
 import javax.inject.Inject
@@ -20,6 +21,9 @@ class ShopListProvider : ContentProvider() {
 
     @Inject
     lateinit var shopListDao: ShopListDao
+
+    @Inject
+    lateinit var mapper : ShopListMapper
 
     private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
         addURI(authorities, "shop_items", GET_SHOP_ITEM_QUERY)
@@ -60,7 +64,31 @@ class ShopListProvider : ContentProvider() {
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        TODO("Not yet implemented")
+        val code = uriMatcher.match(uri)
+        log("query $uri code = $code" )
+        when(code) {
+            GET_SHOP_ITEM_QUERY -> {
+                if(values == null){
+                    return null
+                }
+
+                val id = values.getAsInteger(KEY_ID)
+                val name = values.getAsString(KEY_NAME)
+                val count = values.getAsInteger(KEY_COUNT)
+                val enabled = values.getAsBoolean(KEY_ENABLED)
+
+                val shopItem = ShopItem(
+                    id = id,
+                    name = name,
+                    count = count,
+                    enabled = enabled
+                )
+
+                shopListDao.addShopItemSync(mapper.mapEntityToDbModel(shopItem))
+
+            }
+        }
+        return null
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
@@ -81,5 +109,10 @@ class ShopListProvider : ContentProvider() {
         private const val GET_SHOP_ITEM_QUERY = 100
         private const val GET_SHOP_ITEM_BY_ID = 101
         private const val GET_SHOP_ITEM_BY_NAME = 102
+
+        const val KEY_ID = "id"
+        const val KEY_NAME = "name"
+        const val KEY_COUNT = "count"
+        const val KEY_ENABLED = "enabled"
     }
 }

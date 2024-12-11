@@ -1,6 +1,8 @@
 package com.example.shoppinglist.presentation
 
+import android.content.ContentValues
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -13,11 +15,13 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.shoppinglist.R
+import com.example.shoppinglist.data.ShopListProvider
 import com.example.shoppinglist.databinding.FragmentShopItemBinding
 import com.example.shoppinglist.di.ViewModelFactory
 import com.example.shoppinglist.domain.ShopItem
 import com.google.android.material.textfield.TextInputLayout
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class ShopItemFragment : Fragment() {
     private var _binding : FragmentShopItemBinding? = null
@@ -163,7 +167,21 @@ class ShopItemFragment : Fragment() {
 
     private fun launchAddMode() {
         binding.saveButton.setOnClickListener {
-            viewModel.addShopItem(binding.etName.text.toString(), binding.etCount.text.toString())
+            val id = 0
+            val name = binding.etName.text.toString()
+            val count = binding.etCount.text.toString()
+            val enabled = true
+            //viewModel.addShopItem(binding.etName.text.toString(), binding.etCount.text.toString())
+            thread {
+                context?.contentResolver?.insert(Uri.parse("content://com.example.shoppinglist/shop_items"),
+                    ContentValues().apply {
+                        put(ShopListProvider.KEY_ID, id)
+                        put(ShopListProvider.KEY_NAME, name)
+                        put(ShopListProvider.KEY_COUNT, count.toInt())
+                        put(ShopListProvider.KEY_ENABLED, enabled)
+                    }
+                )
+            }
         }
     }
 

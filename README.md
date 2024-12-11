@@ -290,3 +290,58 @@ Cursor итератор на БД и он хранит ссылку на БД, �
             cursor?.close()
         }
 
+
+# 13.4 Вставка данных. Класс ContentValues
+
+ContentValues - значения, которые хранятся парой
+
+insert возвращает URI - взтавляет запись и возвращает адрес этой записи, мы не используем, поэтому возвращаем null
+
+override fun insert(uri: Uri, values: ContentValues?): Uri? {
+        val code = uriMatcher.match(uri)
+        log("query $uri code = $code" )
+        when(code) {
+            GET_SHOP_ITEM_QUERY -> {
+                if(values == null){
+                    return null
+                }
+
+                val id = values.getAsInteger(KEY_ID)
+                val name = values.getAsString(KEY_NAME)
+                val count = values.getAsInteger(KEY_COUNT)
+                val enabled = values.getAsBoolean(KEY_ENABLED)
+
+                val shopItem = ShopItem(
+                    id = id,
+                    name = name,
+                    count = count,
+                    enabled = enabled
+                )
+
+                shopListDao.addShopItemSync(mapper.mapEntityToDbModel(shopItem))
+
+            }
+        }
+        return null
+    }
+	
+	
+	private fun launchAddMode() {
+        binding.saveButton.setOnClickListener {
+            val id = 0
+            val name = binding.etName.text.toString()
+            val count = binding.etCount.text.toString()
+            val enabled = true
+            //viewModel.addShopItem(binding.etName.text.toString(), binding.etCount.text.toString())
+            thread {
+                context?.contentResolver?.insert(Uri.parse("content://com.example.shoppinglist/shop_items"),
+                    ContentValues().apply {
+                        put(ShopListProvider.KEY_ID, id)
+                        put(ShopListProvider.KEY_NAME, name)
+                        put(ShopListProvider.KEY_COUNT, count.toInt())
+                        put(ShopListProvider.KEY_ENABLED, enabled)
+                    }
+                )
+            }
+        }
+    }
