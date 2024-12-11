@@ -345,3 +345,42 @@ override fun insert(uri: Uri, values: ContentValues?): Uri? {
             }
         }
     }
+
+#13.5 Удаление данных. Selection и Selection Args
+
+override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int
+
+"DELETE FROM shop_items WHERE id=:shopItemId AND nsme = :name"
+
+когда вызываем метод удаления, то пишется такая строчка "DELETE FROM shop_items WHERE",
+остальное в selection в виде "id= ? AND nsme = ?" вместо значений вопросы
+и этими значениями является массив строк selectionArgs
+
+Это для общего развития
+Т.к. мы используем ROOM то selection игнорируем, а в selectionArgs будем передавать id объекта
+
+Метод delete возвращает Int - означает, сколько строк в БД было удалено
+
+
+  override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
+        val code = uriMatcher.match(uri)
+        log("query $uri code = $code" )
+        when(code) {
+            GET_SHOP_ITEM_QUERY -> {
+                //"DELETE FROM shop_items WHERE id=:shopItemId AND nsme = :name"
+                val id = selectionArgs?.get(0)?.toInt() ?: -1
+                return shopListDao.deleteShopItemSync(id)
+
+            }
+        }
+        return 0
+    }
+	
+	
+	thread {
+                contentResolver.delete(
+                        Uri.parse("content://com.example.shoppinglist/shop_items"),
+                        "",
+                        arrayOf(item.id.toString())
+                    )
+            }
