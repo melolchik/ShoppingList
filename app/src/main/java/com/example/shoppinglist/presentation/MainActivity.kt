@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinglist.R
 import com.example.shoppinglist.databinding.ActivityMainBinding
 import com.example.shoppinglist.di.ViewModelFactory
+import com.example.shoppinglist.domain.ShopItem
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 const val COMMON_TAG = "COMMON"
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
@@ -97,13 +99,41 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
         }
 
-        contentResolver.query(
-            Uri.parse("content://com.example.shoppinglist/shop_items"),
-            null,
-            null,
-            null,
-            null
-        )
+
+        thread {
+            val cursor = contentResolver.query(
+                Uri.parse("content://com.example.shoppinglist/shop_items"),
+                null,
+                null,
+                null,
+                null
+            )
+            log("cursor = $cursor")
+            while(cursor?.moveToNext() == true){
+                log("${cursor.columnCount}")
+
+                for(names in cursor.columnNames){
+                    log("columnNames = ${names}")
+                }
+
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+
+                val shopItem = ShopItem(
+                    id = id,
+                    name = name,
+                    count = count,
+                    enabled = enabled
+                )
+
+                log("shopItem = $shopItem")
+            }
+
+            cursor?.close()
+        }
+
 
         contentResolver.query(
             Uri.parse("content://com.example.shoppinglist/shop_items/3"),

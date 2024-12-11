@@ -221,3 +221,72 @@ class ShopListProvider : ContentProvider() {
         addURI(authorities, "shop_items/*", GET_SHOP_ITEM_BY_NAME)
     }
 }
+	
+#13.3 Загрузка данных из бд. Cursor
+
+Cursor - интерфейс, который позволяет читать данные из бд, что-то вроде итератора
+Курсор изначально указывает на позицию -1 
+
+Context в провайдере и есть Application
+
+Room поддерживает доступ к БД через Cursor
+
+в курсоре нет boolean используем int > 0 == true
+Значение получаем по индексу колонки, индекс берём по названию колонки.
+Cursor итератор на БД и он хранит ссылку на БД, поэтому после использования его нужно освободить - вызвать метод close()
+ 
+ override fun query(
+        uri: Uri,
+        projection: Array<out String>?,
+        selection: String?,
+        selectionArgs: Array<out String>?,
+        sortOrder: String?
+    ): Cursor? {
+
+       val code = uriMatcher.match(uri)
+       log("query $uri code = $code" )
+       return when(code){
+            GET_SHOP_ITEM_QUERY -> {
+                 shopListDao.getShopListCursor()
+            }
+           else -> {
+               null
+           }
+        }
+    }
+	
+	
+	thread {
+            val cursor = contentResolver.query(
+                Uri.parse("content://com.example.shoppinglist/shop_items"),
+                null,
+                null,
+                null,
+                null
+            )
+            log("cursor = $cursor")
+            while(cursor?.moveToNext() == true){
+                log("${cursor.columnCount}")
+
+                for(names in cursor.columnNames){
+                    log("columnNames = ${names}")
+                }
+
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+
+                val shopItem = ShopItem(
+                    id = id,
+                    name = name,
+                    count = count,
+                    enabled = enabled
+                )
+
+                log("shopItem = $shopItem")
+            }
+            
+            cursor?.close()
+        }
+
