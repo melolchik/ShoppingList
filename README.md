@@ -31,30 +31,440 @@ Presentation и Data-слой не должны знать друг о друг�
 
 #4.1 Макеты 
 #4.2 Создание через LinerLayout
+
+inflate и findViewById очень ресурснозатратные методы
+- Отсюда долгий процесс отображения
 #4.3 Adapter Зачем нужен ViewHolder
-ViewHolder
-- inflat
-- findViewById
+
+Проблемы при использовании LinerLayout
+1) Метод inflate медленный и вызывается для каждого элемента
+2) findViewById тоже медленный и вызывается для каждого элементанесколько раз
+3) даже если изменится один элемент нужно перерисовать весь список
+
+Что делают для recyclerView - создаются только видимые view + несколько для top и bottom , потом они переиспользуются
+Адаптер решает как создать одну вью и как заполнить её данные
+
+
+class ShopListAdapter: RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
+ 
+     val list = listOf<ShopItem>()
+     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_shop_enable,parent,false)
+         return ShopItemViewHolder(view)
+     }
+ 
+     override fun getItemCount(): Int  = list.size
+ 
+     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
+         val shopItem = list[position]
+         holder.tvName.text = shopItem.name
+         holder.tvCount.text = shopItem.count.toString()
+         holder.view.setOnClickListener({
+             true
+         })
+     }
+ 
+     class ShopItemViewHolder(val view:View) : RecyclerView.ViewHolder(view){
+         val tvName = view.findViewById<TextView>(R.id.tv_name)
+         val tvCount = view.findViewById<TextView>(R.id.tv_count)
+     }
+ }
+ 
+ViewHolder при создании использует inflat и при создании ViewHolder сразу создаются ссылки на нужные view через findViewById
+А в onBindViewHolder просто прописываются значения
+
 #4.4 Баги при использовании RecyclerView
+//Баг - установка цвета текста только для enabled
+
+Решение
+1) Устанавливать цвет для всех типов вью
+2)Переопределить метод onViewRecycled
+//вызывается когда holder планируется переиспользовать //здесь можно установить значения по default
+override fun onViewRecycled(holder: ShopItemViewHolder) {
+        super.onViewRecycled(holder)
+    }
 #4.5 ViewType и RecycledViewPool
+ getItemViewType нужен в том случае, когда нужны разные лэйауты для разных элементов
+ 
+ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
+ 
+     companion object {
+         const val VIEW_TYPE_ACTIVE = 1
+         const val VIEW_TYPE_INACTIVE = 0
+         const val MAX_POOL_SIZE = 5
+     }
+ 
+     var count = 0
+     var shopList = listOf<ShopItem>()
+         set(value) {
+             field = value
+             notifyDataSetChanged()
+         }
+	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
+        
+         Log.d("Adapter", "onCreateViewHolder count = ${++count}")
+         val view =
+             LayoutInflater.from(parent.context).inflate(
+                 if (viewType == VIEW_TYPE_ACTIVE) R.layout.item_shop_enable else R.layout.item_shop_disabled,
+                 parent,
+                 false
+             )
+         return ShopItemViewHolder(view)
+     }
+
+     override fun getItemCount(): Int = shopList.size
+ 
+     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
+         val shopItem = list[position]
+         val shopItem = shopList[position]
+ 
+         holder.tvName.text = shopItem.name
+         holder.tvCount.text = shopItem.count.toString()
+ 
+         holder.view.setOnClickListener({
+             true
+         })
+     }
+ 
+     //when reused viewHolder
+     override fun onViewRecycled(holder: ShopItemViewHolder) {
+         super.onViewRecycled(holder)
+     }
+ 
+     override fun getItemViewType(position: Int): Int {
+         val shopItem = shopList[position]
+         return if (shopItem.enabled) VIEW_TYPE_ACTIVE else VIEW_TYPE_INACTIVE
+     }
+ 
+     class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+         val tvName = view.findViewById<TextView>(R.id.tv_name)
+         val tvCount = view.findViewById<TextView>(R.id.tv_count)
+ 
+     }
+ }
+ Есть пул вьюхолдеров
+ Можно задать размер пула вьюхолдеров для каждого типа.
+ fun setupRecyclerView(){
+         val rwShopList = findViewById<RecyclerView>(R.id.rv_shop_list)
+         adapter = ShopListAdapter()
+         rwShopList.adapter = adapter
+         rwShopList.recycledViewPool.setMaxRecycledViews(ShopListAdapter.VIEW_TYPE_ACTIVE,ShopListAdapter.MAX_POOL_SIZE)
+         rwShopList.recycledViewPool.setMaxRecycledViews(ShopListAdapter.VIEW_TYPE_INACTIVE,ShopListAdapter.MAX_POOL_SIZE)
+ 
+     }
+	 
 #4.6 Добавление слушателей
+
+    fun setupRecyclerView(){
+         val rwShopList = findViewById<RecyclerView>(R.id.rv_shop_list)         
+         with(rwShopList) {
+             shopListAdapter = ShopListAdapter()
+             adapter = shopListAdapter
+             recycledViewPool.setMaxRecycledViews(
+                 ShopListAdapter.VIEW_TYPE_ACTIVE,
+                 ShopListAdapter.MAX_POOL_SIZE
+             )
+             recycledViewPool.setMaxRecycledViews(
+                 ShopListAdapter.VIEW_TYPE_INACTIVE,
+                 ShopListAdapter.MAX_POOL_SIZE
+             )
+         }
+ 
+         setupLongClickListener()
+         setupClickListener()
+         setupSwipeListener(rwShopList)
+ 
+     }
+ 
+     private fun setupSwipeListener(rwShopList: RecyclerView) {
+         val callback = object : ItemTouchHelper.SimpleCallback(
+             0,
+             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+         ) {
+             override fun onMove(
+                 recyclerView: RecyclerView,
+                 viewHolder: RecyclerView.ViewHolder,
+                 target: RecyclerView.ViewHolder
+             ): Boolean {
+                 return false
+             }
+ 
+             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                 val item = shopListAdapter.shopList[viewHolder.adapterPosition]
+                 viewModel.deleteShopItem(item)
+             }
+ 
+         }
+         val itemTouchHelper = ItemTouchHelper(callback)
+         itemTouchHelper.attachToRecyclerView(rwShopList)
+     }
+ 
+     private fun setupClickListener() {
+         shopListAdapter.onShopItemClickListener = {
+             Log.d(TAG, "onClickListener $it")
+         }
+     }
+ 
+     private fun setupLongClickListener() {
+         shopListAdapter.onShopItemLongClickListener = {
+             viewModel.changeEnableState(it)
+         }
+     }
+	 
+	 class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
+ 
+ в Java
+	//functional interface - interface with one method --> lambda
+     interface OnShopItemLongClickListener{
+         fun onShopItemLongClick(shopItem: ShopItem)
+     }
+		*************
+ в  Kotlin
+     var onShopItemLongClickListener : ((ShopItem) -> Unit)? = null
+     var onShopItemClickListener : ((ShopItem) -> Unit)? = null
+		**************
+ 
+     override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
+         val shopItem = shopList[position]
+ 
+         holder.tvName.text = shopItem.name
+         holder.tvCount.text = shopItem.count.toString()
+ 
+          holder.view.setOnLongClickListener() {
+             onShopItemLongClickListener?.invoke(shopItem)
+             true        
+         }
+         holder.view.setOnClickListener(){
+             onShopItemClickListener?.invoke(shopItem)
+         }
+     }
+ 
+ 
+     
+    
+	 
 #4.7 Проблемы при использовании notifyDatasetChanged
-  полностью перезаполняется видимый список и для каждого элемента вызываетмя OnBindViewHolder
+При изменении одного элемента  полностью перезаполняется видимый список и для каждого элемента вызываетмя OnBindViewHolder
+notifyDatasetChanged - не показывает, какой элемент изменился
+Нужно использовать более конкретные методы изменения списка - все они говорят,что конкретно произошло
+notifyItemChanged(int), 
+notifyItemInserted(int), 
+notifyItemRemoved(int), 
+notifyItemRangeChanged(int, int), 
+notifyItemRangeInserted(int, int), 
+notifyItemRangeRemoved(int, int) 
+Это позволяет перерисовать только нужные элементы + добавить анимцию без лишних усилий
 #4.8 Реализация через DiffUtil и простой адаптер
+Есть старый список, передам новый и адаптер сам определяет, что изменилось и вызывает соотвествующий методы
+Есть два способа, первый работает более медленно, второй способо проще и быстрее
+
+ПЕРВЫЙ
+Создаём колбэк - сравнивает списки
+
+class ShopListDiffCallback(
+     private val oldList : List<ShopItem>,
+     private val newList : List<ShopItem>
+ ) : DiffUtil.Callback(){
+     override fun getOldListSize(): Int  = oldList.size
+ 
+     override fun getNewListSize(): Int  = newList.size
+ 
+     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+         val oldItem : ShopItem = oldList[oldItemPosition]
+         val newItem : ShopItem = newList[newItemPosition]
+         return oldItem.id == newItem.id
+     }
+ 
+     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+         val oldItem : ShopItem = oldList[oldItemPosition]
+         val newItem : ShopItem = newList[newItemPosition]
+         return oldItem == newItem
+     }
+ 
+ }
+ 
+ И переписываем передачу списка
+ var shopList = listOf<ShopItem>()
+         set(value) { 
+             //notifyDataSetChanged()
+             val callback = ShopListDiffCallback(shopList,value)
+             val diffResult = DiffUtil.calculateDiff(callback) - здесь считаются все изменения для адаптера РАБОТАЕТ В ГЛАВНОМ ПОТОКЕ!!!
+             diffResult.dispatchUpdatesTo(this) - применить изменения
+             field = value - сохранить новый списко
+         }
+
+ВТОРОЙ:
 #4.9 Реализация через ListAdapter - diffUtill работает в фоне
+
+Создаём колбэк - сравнивает только элементы
+
+class ShopItemDiffCallback : DiffUtil.ItemCallback<ShopItem>() {
+     override fun areItemsTheSame(oldItem: ShopItem, newItem: ShopItem): Boolean {
+         return oldItem.id == newItem.id
+     }
+ 
+     override fun areContentsTheSame(oldItem: ShopItem, newItem: ShopItem): Boolean {
+         return oldItem == newItem
+     }
+ }
+ 
+ Далее меняем адаптер
+ Наследуемся от ListAdapter - его преимущесто - вся работа со списком скрыта внутри ListAdapter
+ //class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopItemViewHolder>() {
+ class ShopListAdapter : ListAdapter<ShopItem, ShopItemViewHolder>(ShopItemDiffCallback()) {
+
+    companion object {
+        const val VIEW_TYPE_ACTIVE = 1
+        const val VIEW_TYPE_INACTIVE = 0
+        const val MAX_POOL_SIZE = 5
+    }
+
+    var count = 0
+    var onShopItemLongClickListener: ((ShopItem) -> Unit)? = null
+    var onShopItemClickListener: ((ShopItem) -> Unit)? = null
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
+
+        val view =
+            LayoutInflater.from(parent.context).inflate(
+                if (viewType == VIEW_TYPE_ACTIVE) R.layout.item_shop_enable else R.layout.item_shop_disabled,
+                parent,
+                false
+            )
+        return ShopItemViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ShopItemViewHolder, position: Int) {
+        Log.d("Adapter", "onBindViewHolder count = ${++count}")
+        val shopItem = getItem(position)
+
+        holder.tvName.text = shopItem.name
+        holder.tvCount.text = shopItem.count.toString()
+
+        holder.view.setOnLongClickListener() {
+            onShopItemLongClickListener?.invoke(shopItem)
+            true
+        }
+        holder.view.setOnClickListener() {
+            onShopItemClickListener?.invoke(shopItem)
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        val shopItem = getItem(position)
+        return if (shopItem.enabled) VIEW_TYPE_ACTIVE else VIEW_TYPE_INACTIVE
+    }
+
+Передача списка
+viewModel.shopList.observe(this){
+            //Log.d(TAG, "Observe = $it")
+            // shopListAdapter.shopList = it
+             shopListAdapter.submitList(it)
+         }
+}
 #4.10 Вопросы
 
 
 #5 Работа над вторым экраном
 #5.1 Макеты для ShopItemActivity
 #5.2 Создание ShopItemViewModel
+
+class ShopItemViewModel : ViewModel() {
+     private val repository = ShopListRepositoryImpl()
+     private val getShopItemUseCase = GetShopItemUseCase(repository)
+     private val addShopItemUseCase = AddShopItemUseCase(repository)
+     private val editShopItemRepository = EditShopItemUseCase(repository)
+ 
+     fun getShopItem(id : Int){
+         val item = getShopItemUseCase.getShopItem(id)
+     }
+ 
+     fun addShopItem(inputName : String?, inputCount : String?){
+         val name = parseName(inputName)
+         val count = parseCount(inputCount)
+         val fieldsValid = validateInput(name,count)
+         if(fieldsValid) {
+             addShopItemUseCase.addShopItem(ShopItem(name,count,true))
+         }
+     }
+ 
+     fun editShopItem(shopItem: ShopItem,inputName : String?, inputCount : String?){
+         val name = parseName(inputName)
+         val count = parseCount(inputCount)
+         val fieldsValid = validateInput(name,count)
+         if(fieldsValid) {
+             editShopItemRepository.editShopItem(ShopItem(name,count,true,shopItem.id))
+         }
+     }
+ 
+     private fun parseName(name : String?) : String{
+         return name?.trim() ?: ""
+     }
+ 
+     private fun parseCount(name : String?) : Int{
+         return try {
+             name?.toInt() ?: 0
+         }catch (ex : Exception){
+             0
+         }
+     }
+ 
+     private fun validateInput(name : String, count : Int) : Boolean{
+         var result = true;
+         if(name.isBlank()){
+             //ToDo: show error input name
+             result = false
+         }
+         if(count <= 0){
+             //ToDo: show error input count
+             result = false
+         }
+         return result
+     }
+ }
 #5.3 Завершение ShopItemViewModel
 #5.4 Фабричные методы newIntent
+
+  class ShopItemActivity : AppCompatActivity() {
+    private lateinit var viewModel: ShopItemViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContentView(R.layout.activity_shop_item)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        val mode = intent.getStringExtra("extra_mode")
+    }
+
+    companion object{
+        private const val EXTRA_SCREEN_MODE = "extra_mode"
+        private const val EXTRA_SHOP_ITEM_ID = "extra_shop_item_id"
+        private const val MODE_ADD = "mode_add"
+        private const val MODE_EDIT = "mode_edit"
+
+        fun newIntentAddItem(context: Context) : Intent{
+            val intent = Intent(context,ShopItemActivity::class.java)
+            intent.putExtra(EXTRA_SCREEN_MODE,MODE_ADD)
+            return intent
+        }
+
+        fun newIntentEditItem(context: Context, shopItemId : Int) : Intent{
+            val intent = Intent(context,ShopItemActivity::class.java)
+            intent.putExtra(EXTRA_SCREEN_MODE, MODE_EDIT)
+            intent.putExtra(EXTRA_SHOP_ITEM_ID,shopItemId)
+            return intent
+        }
+    }
+}
 #5.5 Завершение работы над ShopItemActivity
-  
   
 #6 Фрагменты
 #6.1 Зачем нужны фрагменты
+
+
 #6.2 Установка фрагмента на экране ShopItemActivity
 #6.3 Параметры во фрагменте и LifecycleOwner
 #6.4 Методы require и get, работа с FragmentManager
@@ -145,6 +555,9 @@ Dispatchers.Default - для долгих выч, макс. кол-во пото
 #11.20 Dependency Injection. Shopping List
 
 #13.1 Создание провайдера
+
+Провайдер - это интерфейс для работы с данными. 
+Обычно используется если данные нужно шарить между различными приложениями
 
 class ShopListProvider : ContentProvider() {
 
