@@ -40,7 +40,7 @@ class ShopItemFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory : ViewModelFactory
 
-    fun log(text: String){
+    private fun log(text: String){
         Log.d(COMMON_TAG,"$TAG $screenMode: $text")
     }
 
@@ -91,7 +91,7 @@ class ShopItemFragment : Fragment() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        log("onCreate")
+        log("onCreate $savedInstanceState")
         parseArguments()
     }
     override fun onCreateView(
@@ -99,14 +99,14 @@ class ShopItemFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        log("onCreateView")
+        log("onCreateView $savedInstanceState")
         _binding = FragmentShopItemBinding.inflate(inflater,container,false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        log("onViewCreated")
+        log("onViewCreated $savedInstanceState")
         viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
@@ -122,6 +122,20 @@ class ShopItemFragment : Fragment() {
 
         }
 
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        log("onViewStateRestored $savedInstanceState")
+
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        log("onSaveInstanceState $outState")
+        outState.putString("etName", binding.etName.text.toString())
+        outState.putString("etCount", binding.etCount.text.toString())
     }
 
     private fun initErrors() {

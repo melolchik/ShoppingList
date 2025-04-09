@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
 
 
-    fun log(text: String){
+    private fun log(text: String){
         Log.d(COMMON_TAG,"$TAG: $text")
     }
     override fun onResume() {

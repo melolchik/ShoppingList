@@ -18,7 +18,7 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
     private var screenMode = MODE_UNKNOWN
     private var shopItemId: Int = ShopItem.UNDEFINED_ID
 
-    fun log(text: String){
+    private fun log(text: String){
         Log.d(COMMON_TAG,"$TAG: $text")
     }
     override fun onCreate(savedInstanceState: Bundle?) {
