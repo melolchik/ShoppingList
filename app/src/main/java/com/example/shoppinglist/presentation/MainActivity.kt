@@ -130,7 +130,10 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
         }
 
-        Concurrency.main()
+       // Concurrency.main()
+        Algorithms.test()
+        //QueueWithPriority.test()
+        Sorting.test()
 
       /*  thread {
             val cursor = contentResolver.query(
